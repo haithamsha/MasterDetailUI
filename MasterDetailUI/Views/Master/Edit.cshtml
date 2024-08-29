@@ -1,0 +1,104 @@
+﻿@model MasterDetailUI.Models.Master
+
+@{
+    ViewData["Title"] = "Edit Master";
+}
+
+<h1>Edit Master Data</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="EducationLevel" class="control-label"></label>
+        <input asp-for="EducationLevel" class="form-control" />
+        <span asp-validation-for="EducationLevel" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SocialMediaAccounts" class="control-label"></label>
+        <input asp-for="SocialMediaAccounts" class="form-control" />
+        <span asp-validation-for="SocialMediaAccounts" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PersonalWebSite" class="control-label"></label>
+        <input asp-for="PersonalWebSite" class="form-control" />
+        <span asp-validation-for="PersonalWebSite" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="YearsOfExperience" class="control-label"></label>
+        <input asp-for="YearsOfExperience" class="form-control" type="number" />
+        <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <h3>Details</h3>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Teaching Type</th>
+                    <th>Accredited Hours</th>
+                    <th>School Location</th>
+                    <th>Certificate Date</th>
+                    <th>School Name</th>
+                    <th>School Link</th>
+                    <th>School Social Media Account</th>
+                    <th>Certificate File</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="detailsTableBody">
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    <tr>
+                        <td><input type="text" name="Details[@i].TeachingType" value="@Model.Details[i].TeachingType" class="form-control" /></td>
+                        <td><input type="number" name="Details[@i].AccreditedHours" value="@Model.Details[i].AccreditedHours" class="form-control" /></td>
+                        <td><input type="text" name="Details[@i].SchoolLocation" value="@Model.Details[i].SchoolLocation" class="form-control" /></td>
+                        <td><input type="date" name="Details[@i].CertificateDate" value="@Model.Details[i].CertificateDate.ToString("yyyy-MM-dd")" class="form-control" /></td>
+                        <td><input type="text" name="Details[@i].SchoolName" value="@Model.Details[i].SchoolName" class="form-control" /></td>
+                        <td><input type="text" name="Details[@i].SchoolLink" value="@Model.Details[i].SchoolLink" class="form-control" /></td>
+                        <td><input type="text" name="Details[@i].SchoolSocialMediaAccount" value="@Model.Details[i].SchoolSocialMediaAccount" class="form-control" /></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.Details[i].CertificateFile))
+                            {
+                                <a href="@Model.Details[i].CertificateFile" target="_blank">View File</a>
+                            }
+                            <input type="file" name="Details[@i].CertificateFile" class="form-control" />
+                        </td>
+                        <td><button type="button" class="btn btn-danger removeDetailRow">Remove</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-success" id="addDetailRow">Add Detail Row</button>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#addDetailRow').click(function () {
+                var rowCount = $('#detailsTableBody tr').length;
+                var newRow = `<tr>
+                            <td><input type="text" name="Details[${rowCount}].TeachingType" class="form-control" /></td>
+                            <td><input type="number" name="Details[${rowCount}].AccreditedHours" class="form-control" /></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolLocation" class="form-control" /></td>
+                            <td><input type="date" name="Details[${rowCount}].CertificateDate" class="form-control" /></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolName" class="form-control" /></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolLink" class="form-control" /></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolSocialMediaAccount" class="form-control" /></td>
+                            <td><input type="file" name="Details[${rowCount}].CertificateFile" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-danger removeDetailRow">Remove</button></td>
+                        </tr>`;
+                $('#detailsTableBody').append(newRow);
+            });
+
+            $(document).on('click', '.removeDetailRow', function () {
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
+}

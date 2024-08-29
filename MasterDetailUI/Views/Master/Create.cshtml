@@ -1,0 +1,145 @@
+﻿@model MasterDetailUI.Models.Master
+
+@{
+    ViewData["Title"] = "Create Master";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Create Master Data</h2>
+
+    <!-- Display validation summary -->
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <!-- Master Data Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Master Data</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="EducationLevel" class="form-label"></label>
+                    <select asp-for="EducationLevel" class="form-select">
+                        <option value="">Select Education Level</option>
+                        <option value="HighSchool">High School</option>
+                        <option value="Bachelors">Bachelors</option>
+                        <option value="Masters">Masters</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                    <span asp-validation-for="EducationLevel" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SocialMediaAccounts" class="form-label"></label>
+                    <input asp-for="SocialMediaAccounts" class="form-control" placeholder="Enter social media accounts" />
+                    <span asp-validation-for="SocialMediaAccounts" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="PersonalWebSite" class="form-label"></label>
+                    <input asp-for="PersonalWebSite" class="form-control" placeholder="Enter personal website URL" />
+                    <span asp-validation-for="PersonalWebSite" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="YearsOfExperience" class="form-label"></label>
+                    <input asp-for="YearsOfExperience" class="form-control" type="number" placeholder="Enter years of experience" />
+                    <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Data Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Detail Data</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Teaching Type</th>
+                                <th>Accredited Hours</th>
+                                <th>School Location</th>
+                                <th>Certificate Date</th>
+                                <th>School Name</th>
+                                <th>School Link</th>
+                                <th>School Social Media Account</th>
+                                <th>Certificate File</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailsTableBody">
+                            <!-- Dynamic detail rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn btn-outline-success mt-3" id="addDetailRow">
+                    <i class="bi bi-plus-circle"></i> Add Detail Row
+                </button>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-end">
+            <input type="submit" value="Create" class="btn btn-primary me-2" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#addDetailRow').click(function () {
+                var rowCount = $('#detailsTableBody tr').length;
+                var newRow = `<tr>
+                            <td><select name="Details[${rowCount}].TeachingType" class="form-select" required>
+                                    <option value="">Select</option>
+                                    <option value="FullTime">Full Time</option>
+                                    <option value="PartTime">Part Time</option>
+                                    <option value="Online">Online</option>
+                                </select><span class="text-danger" data-valmsg-for="Details[${rowCount}].TeachingType" data-valmsg-replace="true"></span></td>
+                            <td><input type="number" name="Details[${rowCount}].AccreditedHours" class="form-control" required />
+                                <span class="text-danger" data-valmsg-for="Details[${rowCount}].AccreditedHours" data-valmsg-replace="true"></span></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolLocation" class="form-control" required />
+                                <span class="text-danger" data-valmsg-for="Details[${rowCount}].SchoolLocation" data-valmsg-replace="true"></span></td>
+                            <td><input type="date" name="Details[${rowCount}].CertificateDate" class="form-control" required />
+                                <span class="text-danger" data-valmsg-for="Details[${rowCount}].CertificateDate" data-valmsg-replace="true"></span></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolName" class="form-control" required />
+                                <span class="text-danger" data-valmsg-for="Details[${rowCount}].SchoolName" data-valmsg-replace="true"></span></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolLink" class="form-control" />
+                                <span class="text-danger" data-valmsg-for="Details[${rowCount}].SchoolLink" data-valmsg-replace="true"></span></td>
+                            <td><input type="text" name="Details[${rowCount}].SchoolSocialMediaAccount" class="form-control" /></td>
+                            <td><input type="file" name="Details[${rowCount}].CertificateFile" class="form-control" required />
+                                <span class="text-danger" data-valmsg-for="Details[${rowCount}].CertificateFile" data-valmsg-replace="true"></span></td>
+                            <td><button type="button" class="btn btn-outline-danger removeDetailRow"><i class="bi bi-trash"></i> Remove</button></td>
+                        </tr>`;
+                $('#detailsTableBody').append(newRow);
+                // Re-apply validation to new elements
+                $.validator.unobtrusive.parse('#detailsTableBody');
+            });
+
+            $(document).on('click', '.removeDetailRow', function () {
+                $(this).closest('tr').remove();
+                updateRowIndices();
+            });
+
+            function updateRowIndices() {
+                $('#detailsTableBody tr').each(function (index, row) {
+                    $(row).find('input, select').each(function () {
+                        var name = $(this).attr('name');
+                        if (name) {
+                            var newName = name.replace(/\[\d+\]/, `[${index}]`);
+                            $(this).attr('name', newName);
+                        }
+                    });
+                });
+                // Re-apply validation to updated elements
+                $.validator.unobtrusive.parse('#detailsTableBody');
+            }
+        });
+    </script>
+}
+
